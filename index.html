@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NexRush — VRChat streamer &amp; stream tooling</title>
+<meta name="description" content="NexRush — mute VRChat streamer building open-source tools for streamers. Twitch, Discord, GitHub, Ko-fi.">
+<meta name="theme-color" content="#07060d">
+
+<!-- Social preview. Replace the image URL once you have a banner hosted. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="NexRush">
+<meta property="og:description" content="Mute VRChat streamer. Open-source stream tools. No mic, always listening.">
+<meta property="og:url" content="https://nexrushvr.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%9A%A1</text></svg>">
+
+<style>
+  :root{
+    --bg:#07060d;
+    --bg-2:#0d0a18;
+    --card:rgba(255,255,255,.045);
+    --card-hover:rgba(255,255,255,.085);
+    --line:rgba(255,255,255,.10);
+    --line-hover:rgba(255,255,255,.22);
+    --text:#f2eef8;
+    --muted:#a49cb8;
+    --pink:#ff4fd8;
+    --cyan:#4fe8ff;
+    --violet:#9b5cff;
+    --radius:16px;
+    --maxw:520px;
+  }
+
+  *{box-sizing:border-box;}
+
+  html{min-height:100%; background:var(--bg);}
+
+  body{
+    min-height:100%;
+    margin:0;
+    padding:clamp(28px,7vw,64px) 20px calc(48px + env(safe-area-inset-bottom));
+    background:var(--bg);
+    color:var(--text);
+    font:16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    justify-content:center;
+  }
+
+  /* fixed glow layer — covers the viewport no matter how long the page gets */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background:
+      radial-gradient(900px 520px at 50% -12%, rgba(155,92,255,.30), transparent 65%),
+      radial-gradient(700px 460px at 88% 8%, rgba(79,232,255,.14), transparent 62%),
+      radial-gradient(760px 520px at 6% 34%, rgba(255,79,216,.14), transparent 60%),
+      linear-gradient(180deg, var(--bg-2), var(--bg) 60%);
+  }
+
+  /* faint scanline texture — never intercepts clicks */
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+    z-index:0;
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:var(--maxw);
+  }
+
+  /* ---------- header ---------- */
+
+  header{text-align:center; margin-bottom:30px;}
+
+  .avatar{
+    width:104px;
+    height:104px;
+    border-radius:26px;
+    margin:0 auto 18px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(140deg,#1b1230,#0b0a16);
+    border:1px solid var(--line);
+    box-shadow:0 0 0 1px rgba(255,79,216,.18), 0 18px 44px -18px rgba(155,92,255,.75);
+    overflow:hidden;
+  }
+  .avatar img{width:100%; height:100%; object-fit:cover; display:block;}
+  .avatar .mark{
+    font-size:38px;
+    font-weight:800;
+    letter-spacing:-1px;
+    background:linear-gradient(180deg,#fff 20%,var(--cyan) 55%,var(--pink) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  h1{
+    margin:0 0 8px;
+    font-size:clamp(30px,7.5vw,40px);
+    line-height:1.05;
+    letter-spacing:-.02em;
+    font-weight:800;
+    background:linear-gradient(100deg,#ffffff 0%,#e6d7ff 30%,var(--cyan) 62%,var(--pink) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .tag{
+    margin:0 auto;
+    max-width:34ch;
+    color:var(--muted);
+    font-size:15px;
+  }
+
+  .status{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    margin-top:14px;
+    padding:5px 13px 5px 10px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:rgba(255,255,255,.04);
+    font-size:12.5px;
+    letter-spacing:.055em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--pink);
+    box-shadow:0 0 0 0 rgba(255,79,216,.6);
+    animation:pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(255,79,216,.55);}
+    70%{box-shadow:0 0 0 9px rgba(255,79,216,0);}
+    100%{box-shadow:0 0 0 0 rgba(255,79,216,0);}
+  }
+
+  /* ---------- links ---------- */
+
+  nav{display:flex; flex-direction:column; gap:11px;}
+
+  .link{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:15px 17px;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--text);
+    text-decoration:none;
+    transition:transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+    overflow:hidden;
+  }
+  .link::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    opacity:0;
+    transition:opacity .16s ease;
+    background:linear-gradient(100deg, rgba(255,79,216,.16), rgba(79,232,255,.10));
+  }
+  .link:hover,
+  .link:focus-visible{
+    transform:translateY(-2px);
+    background:var(--card-hover);
+    border-color:var(--line-hover);
+    box-shadow:0 14px 32px -20px rgba(0,0,0,.95);
+  }
+  .link:hover::after{opacity:1;}
+  .link:focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+  .link:active{transform:translateY(0);}
+  .link > *{position:relative; z-index:1;}
+
+  /* primary CTA */
+  .link.primary{
+    border-color:rgba(255,79,216,.42);
+    background:linear-gradient(100deg, rgba(255,79,216,.20), rgba(155,92,255,.16));
+    padding:19px 17px;
+    box-shadow:0 0 34px -14px rgba(255,79,216,.65);
+  }
+  .link.primary:hover{border-color:rgba(255,79,216,.7);}
+
+  /* strong second */
+  .link.accent{
+    border-color:rgba(155,92,255,.34);
+    background:linear-gradient(100deg, rgba(155,92,255,.14), rgba(79,232,255,.07));
+    padding:17px;
+  }
+  .link.accent:hover{border-color:rgba(155,92,255,.6);}
+  .link.accent .ico{background:rgba(255,255,255,.09);}
+  .link.accent .txt b{font-size:16.5px;}
+
+  .ico{
+    flex:0 0 40px;
+    width:40px; height:40px;
+    display:grid; place-items:center;
+    border-radius:11px;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--line);
+  }
+  .ico svg{width:20px; height:20px; fill:currentColor; display:block;}
+  .link.primary .ico{background:rgba(255,255,255,.12);}
+
+  .txt{flex:1 1 auto; min-width:0;}
+  .txt b{display:block; font-size:15.5px; font-weight:650; letter-spacing:-.005em;}
+  .txt span{display:block; font-size:12.8px; color:var(--muted); margin-top:2px;}
+  .link.primary .txt b{font-size:17px;}
+
+  .arrow{flex:0 0 auto; color:var(--muted); transition:transform .16s ease, color .16s ease;}
+  .arrow svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; display:block;}
+  .link:hover .arrow{transform:translateX(3px); color:var(--text);}
+
+  /* ---------- sections ---------- */
+
+  .rule{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:26px 0 13px;
+    color:var(--muted);
+    font-size:11.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .rule::before, .rule::after{
+    content:"";
+    height:1px;
+    flex:1;
+    background:linear-gradient(90deg, transparent, var(--line), transparent);
+  }
+
+  /* ---------- footer ---------- */
+
+  footer{
+    margin-top:34px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    line-height:1.7;
+  }
+  footer a{color:var(--muted); text-decoration:underline; text-underline-offset:3px;}
+  footer a:hover{color:var(--text);}
+  .handle{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color:#cbbfe4;
+    letter-spacing:.02em;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important; transition:none !important;}
+    .link:hover{transform:none;}
+  }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <!-- Swap the <span class="mark"> below for <img src="avatar.png" alt="NexRush logo"> once you drop the chrome logo in the repo. -->
+    <div class="avatar"><span class="mark">NR</span></div>
+
+    <h1>NexRush</h1>
+    <p class="tag">Mute VRChat dancer &amp; streamer. I build open-source stream tools.</p>
+    <span class="status"><span class="dot" aria-hidden="true"></span>VRChat &amp; tooling</span>
+  </header>
+
+  <nav aria-label="NexRush links">
+
+    <a class="link primary" href="https://ko-fi.com/nexrush">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 4h13a4 4 0 0 1 0 8h-1.2A6 6 0 0 1 10 17H8a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2Zm0 2v5a4 4 0 0 0 4 4h2a4 4 0 0 0 4-4V6H4Zm13 0v4a2 2 0 0 0 0-4ZM3 19h16v2H3v-2Z"/></svg>
+      </span>
+      <span class="txt"><b>Tip Jar</b><span>Never required, always appreciated ♥</span></span>
+      <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="link accent" href="https://www.twitch.tv/nex_rush">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4.3 3 3 6.2v12.6h4.3V21h2.4l2.2-2.2h3.5l4.6-4.6V3H4.3Zm14.3 10.4-2.6 2.6h-3.9l-2.2 2.2v-2.2H6.6V4.6h12v8.8Z"/><path d="M14.6 7.2h1.6v4.5h-1.6zM10.3 7.2h1.6v4.5h-1.6z"/></svg>
+      </span>
+      <span class="txt"><b>Twitch</b><span>Live streams &amp; VODs</span></span>
+      <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <!--
+      Parked until you actually want them. Paste the URL over the # and move the
+      block above the "Tools I build" rule to bring one back.
+
+      <a class="link" href="#DISCORD-INVITE">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M19.5 5.6A16.4 16.4 0 0 0 15.4 4.3l-.2.4a15.3 15.3 0 0 1 3.6 1.5 12.6 12.6 0 0 0-9.6 0 15.3 15.3 0 0 1 3.6-1.5l-.2-.4A16.4 16.4 0 0 0 4.5 5.6C2 9.4 1.3 13.1 1.6 16.7a16.6 16.6 0 0 0 5 2.6l1-1.7a10.8 10.8 0 0 1-1.7-.8l.4-.3a11.8 11.8 0 0 0 10 0l.4.3a10.8 10.8 0 0 1-1.7.8l1 1.7a16.6 16.6 0 0 0 5-2.6c.4-4.2-.6-7.9-2.5-11.1ZM8.6 14.5c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm6.8 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"/></svg>
+        </span>
+        <span class="txt"><b>Discord</b><span>Stream pings &amp; VRChat meetups</span></span>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <a class="link" href="#VRC-GROUP">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2 3 6.6v6.1c0 4 3.6 7.7 9 9.3 5.4-1.6 9-5.3 9-9.3V6.6L12 2Zm0 2.2 7 3.6v5c0 3-2.8 5.9-7 7.3-4.2-1.4-7-4.3-7-7.3v-5l7-3.6Z"/><circle cx="9.3" cy="11.2" r="1.5"/><circle cx="14.7" cy="11.2" r="1.5"/></svg>
+        </span>
+        <span class="txt"><b>VRChat Group</b><span>Join the group</span></span>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    -->
+
+    <div class="rule">Tools I build</div>
+
+    <a class="link" href="https://github.com/NexRushVr">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.7.4-1.1.6-1.4-2.2-.2-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.8-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+      </span>
+      <span class="txt"><b>GitHub</b><span>Open-source stream tooling — free, MIT</span></span>
+      <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="link" href="https://github.com/NexRushVr/stream-tracklist">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M20 3 8 5.4v9.9a3.6 3.6 0 1 0 2 3.2V9.1l8-1.6v5.6a3.6 3.6 0 1 0 2 3.2V3Z"/></svg>
+      </span>
+      <span class="txt"><b>stream-tracklist</b><span>Auto-Shazam a VOD into a Spotify playlist</span></span>
+      <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="link" href="https://github.com/NexRushVr/optimized-discord-gifs-avif">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v12h16V6H4Zm3.5 3h2.2v1.5H9v3h.7V15H7.5a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1Zm4 0H13v6h-1.5V9Zm3 0h3.7v1.5h-2.2v1.2h1.9v1.5h-1.9V15H14.5V9Z"/></svg>
+      </span>
+      <span class="txt"><b>optimized-discord-gifs</b><span>Videos → tiny looping AVIF clips, bg removal</span></span>
+      <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+  </nav>
+
+  <footer>
+    <p><span class="handle">NexRush</span> on Twitch, VRChat &amp; GitHub</p>
+    <p>Tools are MIT licensed. Built and hosted on <a href="https://github.com/NexRushVr">GitHub</a>.</p>
+  </footer>
+
+</div>
+</body>
+</html>
