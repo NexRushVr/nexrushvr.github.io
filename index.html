@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NexRush — VRChat dancer &amp; streamer</title>
-<meta name="description" content="NexRush — mute VRChat dancer and streamer who builds open-source stream tools. Tip jar, Twitch, GitHub.">
+<title>NexRush — VRChat dancer</title>
+<meta name="description" content="NexRush — mute VRChat dancer who builds open-source stream tools. Tip jar, GitHub, Twitch.">
 <meta name="theme-color" content="#07060d">
 
 <!-- Social preview. Replace the image URL once you have a banner hosted. -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="NexRush">
-<meta property="og:description" content="Mute VRChat dancer &amp; streamer. I build open-source stream tools.">
+<meta property="og:description" content="Mute VRChat dancer. I build open-source stream tools.">
 <meta property="og:url" content="https://nexrushvr.github.io/">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -26,9 +26,10 @@
     --line-hover:rgba(255,255,255,.22);
     --text:#f2eef8;
     --muted:#a49cb8;
-    --pink:#ff4fd8;
-    --cyan:#4fe8ff;
+    --pink:#ff3ec8;
+    --cyan:#35e0ff;
     --violet:#9b5cff;
+    --copper:#c9714f;
     --radius:16px;
     --maxw:520px;
   }
@@ -58,8 +59,9 @@
     z-index:0;
     background:
       radial-gradient(900px 520px at 50% -12%, rgba(155,92,255,.30), transparent 65%),
-      radial-gradient(700px 460px at 88% 8%, rgba(79,232,255,.14), transparent 62%),
-      radial-gradient(760px 520px at 6% 34%, rgba(255,79,216,.14), transparent 60%),
+      radial-gradient(700px 460px at 88% 8%, rgba(53,224,255,.15), transparent 62%),
+      radial-gradient(760px 520px at 6% 34%, rgba(255,62,200,.15), transparent 60%),
+      radial-gradient(680px 420px at 78% 88%, rgba(201,113,79,.13), transparent 66%),
       linear-gradient(180deg, var(--bg-2), var(--bg) 60%);
   }
 
@@ -98,26 +100,21 @@
     overflow:hidden;
   }
   .avatar img{width:100%; height:100%; object-fit:cover; display:block;}
-  .avatar .mark{
-    font-size:38px;
-    font-weight:800;
-    letter-spacing:-1px;
-    background:linear-gradient(180deg,#fff 20%,var(--cyan) 55%,var(--pink) 100%);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-  }
 
+  /* chrome wordmark — silver core, cyan and magenta at the edges */
   h1{
     margin:0 0 8px;
-    font-size:clamp(30px,7.5vw,40px);
+    font-size:clamp(32px,8vw,44px);
     line-height:1.05;
-    letter-spacing:-.02em;
+    letter-spacing:-.015em;
     font-weight:800;
-    background:linear-gradient(100deg,#ffffff 0%,#e6d7ff 30%,var(--cyan) 62%,var(--pink) 100%);
+    background:linear-gradient(178deg,
+      #ffffff 0%, #dfe7ef 22%, #9fb3c4 40%,
+      var(--cyan) 56%, #ffffff 68%, var(--pink) 88%, #b0246f 100%);
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
+    filter:drop-shadow(0 1px 0 rgba(255,255,255,.28)) drop-shadow(0 6px 18px rgba(255,62,200,.28));
   }
 
   .tag{
@@ -278,11 +275,10 @@
 <div class="wrap">
 
   <header>
-    <!-- Swap the <span class="mark"> below for <img src="avatar.png" alt="NexRush logo"> once you drop the chrome logo in the repo. -->
-    <div class="avatar"><span class="mark">NR</span></div>
+    <div class="avatar"><img src="data:image/webp;base64,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" alt="NexRush" width="176" height="176"></div>
 
     <h1>NexRush</h1>
-    <p class="tag">Mute VRChat dancer &amp; streamer. I build open-source stream tools.</p>
+    <p class="tag">Mute VRChat dancer. I build open-source stream tools between sessions.</p>
     <span class="status"><span class="dot" aria-hidden="true"></span>VRChat &amp; tooling</span>
   </header>
 
@@ -292,15 +288,7 @@
       <span class="ico" aria-hidden="true">
         <svg viewBox="0 0 24 24"><path d="M4 4h13a4 4 0 0 1 0 8h-1.2A6 6 0 0 1 10 17H8a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2Zm0 2v5a4 4 0 0 0 4 4h2a4 4 0 0 0 4-4V6H4Zm13 0v4a2 2 0 0 0 0-4ZM3 19h16v2H3v-2Z"/></svg>
       </span>
-      <span class="txt"><b>Tip Jar</b><span>Never required, always appreciated ♥</span></span>
-      <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-    </a>
-
-    <a class="link accent" href="https://www.twitch.tv/nex_rush">
-      <span class="ico" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M4.3 3 3 6.2v12.6h4.3V21h2.4l2.2-2.2h3.5l4.6-4.6V3H4.3Zm14.3 10.4-2.6 2.6h-3.9l-2.2 2.2v-2.2H6.6V4.6h12v8.8Z"/><path d="M14.6 7.2h1.6v4.5h-1.6zM10.3 7.2h1.6v4.5h-1.6z"/></svg>
-      </span>
-      <span class="txt"><b>Twitch</b><span>Live streams &amp; VODs</span></span>
+      <span class="txt"><b>Tip Jar</b><span>Funding the Quest Pros I keep killing. Never required ♥</span></span>
       <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
 
@@ -348,6 +336,16 @@
         <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v12h16V6H4Zm3.5 3h2.2v1.5H9v3h.7V15H7.5a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1Zm4 0H13v6h-1.5V9Zm3 0h3.7v1.5h-2.2v1.2h1.9v1.5h-1.9V15H14.5V9Z"/></svg>
       </span>
       <span class="txt"><b>optimized-discord-gifs</b><span>Videos → tiny looping AVIF clips, bg removal</span></span>
+      <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <div class="rule">Someday</div>
+
+    <a class="link" href="https://www.twitch.tv/nex_rush">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4.3 3 3 6.2v12.6h4.3V21h2.4l2.2-2.2h3.5l4.6-4.6V3H4.3Zm14.3 10.4-2.6 2.6h-3.9l-2.2 2.2v-2.2H6.6V4.6h12v8.8Z"/><path d="M14.6 7.2h1.6v4.5h-1.6zM10.3 7.2h1.6v4.5h-1.6z"/></svg>
+      </span>
+      <span class="txt"><b>Twitch</b><span>I don't actually stream — but maybe some day</span></span>
       <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
 
