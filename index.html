@@ -189,6 +189,22 @@
   .link:active{transform:translateY(0);}
   .link > *{position:relative; z-index:1;}
 
+  /* placeholder row - not a link yet */
+  .link.pending{
+    cursor:default;
+    border-style:dashed;
+    background:rgba(255,255,255,.02);
+  }
+  .link.pending:hover,
+  .link.pending:focus-visible{
+    transform:none;
+    background:rgba(255,255,255,.02);
+    border-color:var(--line);
+    box-shadow:none;
+  }
+  .link.pending:hover::after{opacity:0;}
+  .link.pending .txt b{color:var(--muted);}
+
   /* primary CTA */
   .link.primary{
     border-color:rgba(255,79,216,.42);
@@ -313,6 +329,15 @@
         <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       </a>
     -->
+
+    <div class="rule">Dance References</div>
+
+    <div class="link pending">
+      <span class="ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5.2 3L10 15Z"/></svg>
+      </span>
+      <span class="txt"><b>Coming soon</b><span>Linking to a YouTube playlist by 8/30</span></span>
+    </div>
 
     <div class="rule">Tools I build</div>
 
