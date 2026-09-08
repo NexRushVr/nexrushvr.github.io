@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VR setup — NexRush</title>
+<meta name="description" content="The headset, tracking, audio, PC and capture setup NexRush runs for VRChat.">
+<meta name="theme-color" content="#07060d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="VR setup — NexRush">
+<meta property="og:description" content="Quest Pro, 9 trackers, lighthouse full-body. What I run.">
+<meta property="og:url" content="https://nexrushvr.github.io/setup.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%9A%A1</text></svg>">
+<style>
+  :root{
+    --bg:#07060d; --bg-2:#0d0a18;
+    --card:rgba(255,255,255,.045); --card-hover:rgba(255,255,255,.085);
+    --line:rgba(255,255,255,.10); --line-hover:rgba(255,255,255,.22);
+    --text:#f2eef8; --muted:#a49cb8;
+    --pink:#ff3ec8; --cyan:#35e0ff; --violet:#9b5cff; --copper:#c9714f;
+    --radius:16px; --maxw:600px;
+  }
+  *{box-sizing:border-box;}
+  html{min-height:100%; background:var(--bg);}
+  body{
+    min-height:100%; margin:0;
+    padding:clamp(24px,6vw,56px) 20px calc(48px + env(safe-area-inset-bottom));
+    background:var(--bg); color:var(--text);
+    font:16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing:antialiased; display:flex; justify-content:center;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(900px 520px at 50% -12%, rgba(155,92,255,.30), transparent 65%),
+      radial-gradient(700px 460px at 88% 8%, rgba(53,224,255,.15), transparent 62%),
+      radial-gradient(760px 520px at 6% 34%, rgba(255,62,200,.15), transparent 60%),
+      radial-gradient(680px 420px at 78% 88%, rgba(201,113,79,.13), transparent 66%),
+      linear-gradient(180deg, var(--bg-2), var(--bg) 60%);
+  }
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay; z-index:0;
+  }
+  .wrap{position:relative; z-index:1; width:100%; max-width:var(--maxw);}
+
+  .back{
+    display:inline-flex; align-items:center; gap:8px;
+    color:var(--muted); text-decoration:none; font-size:13px;
+    letter-spacing:.04em; text-transform:uppercase; margin-bottom:22px;
+    padding:6px 12px 6px 9px; border:1px solid var(--line); border-radius:999px;
+    background:rgba(255,255,255,.04);
+    transition:color .16s ease, border-color .16s ease;
+  }
+  .back:hover{color:var(--text); border-color:var(--line-hover);}
+  .back svg{width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
+
+  header{margin-bottom:26px;}
+  h1{
+    margin:0 0 8px; font-size:clamp(28px,7vw,38px); line-height:1.08;
+    letter-spacing:-.015em; font-weight:800;
+    background:linear-gradient(178deg,
+      #ffffff 0%, #dfe7ef 22%, #9fb3c4 40%,
+      var(--cyan) 56%, #ffffff 68%, var(--pink) 88%, #b0246f 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 1px 0 rgba(255,255,255,.28)) drop-shadow(0 6px 18px rgba(255,62,200,.28));
+  }
+  .tag{margin:0; max-width:46ch; color:var(--muted); font-size:15px;}
+
+  .rule{
+    display:flex; align-items:center; gap:12px; margin:30px 0 13px;
+    color:var(--muted); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase;
+  }
+  .rule::before, .rule::after{
+    content:""; height:1px; flex:1;
+    background:linear-gradient(90deg, transparent, var(--line), transparent);
+  }
+  .rule.left::before{display:none;}
+
+  .list{display:flex; flex-direction:column; gap:11px;}
+
+  .row{
+    position:relative; display:flex; align-items:center; gap:15px;
+    padding:15px 17px; border-radius:var(--radius);
+    border:1px solid var(--line); background:var(--card);
+    color:var(--text); text-decoration:none; overflow:hidden;
+    transition:transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+  }
+  a.row::after{
+    content:""; position:absolute; inset:0; border-radius:inherit; opacity:0;
+    transition:opacity .16s ease;
+    background:linear-gradient(100deg, rgba(255,79,216,.16), rgba(79,232,255,.10));
+  }
+  a.row:hover, a.row:focus-visible{
+    transform:translateY(-2px); background:var(--card-hover);
+    border-color:var(--line-hover); box-shadow:0 14px 32px -20px rgba(0,0,0,.95);
+  }
+  a.row:hover::after{opacity:1;}
+  a.row:focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+  a.row:active{transform:translateY(0);}
+  .row > *{position:relative; z-index:1;}
+
+  .row.pending{
+    border-style:dashed; background:rgba(255,255,255,.02); cursor:default;
+  }
+  .row.pending .txt b{color:var(--muted);}
+
+  .ico{
+    flex:0 0 40px; width:40px; height:40px; display:grid; place-items:center;
+    border-radius:11px; background:rgba(255,255,255,.06); border:1px solid var(--line);
+  }
+  .ico svg{width:20px; height:20px; fill:currentColor; display:block;}
+
+  .txt{flex:1 1 auto; min-width:0;}
+  .txt b{display:block; font-size:15.5px; font-weight:650; letter-spacing:-.005em;}
+  .txt span{display:block; font-size:12.8px; color:var(--muted); margin-top:3px;}
+  .txt .by{color:#cbbfe4;}
+
+  .arrow{flex:0 0 auto; color:var(--muted); transition:transform .16s ease, color .16s ease;}
+  .arrow svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; display:block;}
+  a.row:hover .arrow{transform:translateX(3px); color:var(--text);}
+
+  /* spec rows — two-column, no icon */
+  .spec{
+    display:grid; grid-template-columns:minmax(120px,32%) 1fr; gap:4px 18px;
+    padding:14px 17px; border-radius:var(--radius);
+    border:1px solid var(--line); background:var(--card);
+  }
+  .spec dt{color:var(--muted); font-size:12.8px; letter-spacing:.02em;}
+  .spec dd{margin:0; font-size:15px;}
+  .spec dd small{display:block; color:var(--muted); font-size:12.6px; margin-top:3px;}
+  @media (max-width:460px){ .spec{grid-template-columns:1fr;} .spec dt{margin-top:2px;} }
+
+  .note{
+    margin:14px 0 0; padding:13px 16px; border-radius:12px;
+    border:1px solid var(--line); background:rgba(255,255,255,.025);
+    color:var(--muted); font-size:13.2px; line-height:1.6;
+  }
+
+  .note a{color:var(--cyan); text-decoration:underline; text-underline-offset:3px;}
+  .note a:hover{color:var(--text);}
+  .note code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.92em; color:#cbbfe4;}
+  .spec code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.92em; color:#cbbfe4;}
+
+  .tips{
+    margin:0; padding:16px 20px 16px 38px; border-radius:var(--radius);
+    border:1px solid var(--line); background:var(--card);
+  }
+  .tips li{margin:0; font-size:15px; line-height:1.6;}
+  .tips li + li{margin-top:14px;}
+  .tips li b{display:block; font-weight:650; margin-bottom:4px;}
+  .tips li::marker{color:var(--pink);}
+
+  footer{margin-top:38px; text-align:center; color:var(--muted); font-size:12.5px; line-height:1.7;}
+  footer a{color:var(--muted); text-decoration:underline; text-underline-offset:3px;}
+  footer a:hover{color:var(--text);}
+  .handle{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#cbbfe4; letter-spacing:.02em;}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important; transition:none !important;}
+    a.row:hover{transform:none;}
+  }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <a class="back" href="./">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+    NexRush
+  </a>
+
+  <header>
+    <h1>VR setup</h1>
+    <p class="tag">What I use.</p>
+  </header>
+
+  <!-- Update a line when the hardware changes. Delete it when you stop using it. -->
+
+  <div class="rule left">Headset</div>
+
+  <div class="list">
+    <dl class="spec">
+      <dt>Headset</dt>
+      <dd>Meta Quest Pro</dd>
+
+      <dt>Face + eye tracking</dt>
+      <dd>Built into the Quest Pro</dd>
+
+      <dt>Comfort</dt>
+      <dd>Comfort kit, battery pack, top mount with continuous tracking</dd>
+
+      <dt>Audio in</dt>
+      <dd>IEMs</dd>
+    </dl>
+  </div>
+
+  <div class="rule left">Audio</div>
+
+  <div class="list">
+    <dl class="spec">
+      <dt>Mic</dt>
+      <dd>The Quest Pro's built-in</dd>
+
+      <dt>Routing</dt>
+      <dd>Elgato Wave Link</dd>
+
+      <dt>Skipped</dt>
+      <dd>ModMic
+        <small>Annoying to live with. Went back to the built-in.</small>
+      </dd>
+    </dl>
+  </div>
+
+  <div class="rule left">Tracking</div>
+
+  <div class="list">
+    <dl class="spec">
+      <dt>Full-body</dt>
+      <dd>9 × Vive 3.0 trackers on EOZ straps</dd>
+
+      <dt>Controllers</dt>
+      <dd>Index Knuckles</dd>
+
+      <dt>Base stations</dt>
+      <dd>4 × Lighthouse 2.0</dd>
+
+      <dt>Play space</dt>
+      <dd>3 m × 3 m</dd>
+
+      <dt>Index on the wall</dt>
+      <dd>Tracks the Knuckles, and gives me two more dongles</dd>
+
+      <dt>Dongles</dt>
+      <dd>EOZ, plus the EOZ Spider</dd>
+    </dl>
+  </div>
+
+  <div class="rule left">PC</div>
+
+  <div class="list">
+    <dl class="spec">
+      <dt>GPU</dt>
+      <dd>RTX 5080</dd>
+
+      <dt>CPU</dt>
+      <dd>Intel 14700K, undervolted</dd>
+
+      <dt>Memory</dt>
+      <dd>64 GB DDR5-6000 CL30</dd>
+
+      <dt>Case</dt>
+      <dd>Lian Li Lancool II Mesh, NZXT Kraken 360, Noctua intakes</dd>
+    </dl>
+  </div>
+
+  <div class="rule left">Capture</div>
+
+  <div class="list">
+    <dl class="spec">
+      <dt>Wireless</dt>
+      <dd>Virtual Desktop</dd>
+
+      <dt>Recording</dt>
+      <dd>OBS Game Capture
+        <small>VRChat's in-game camera in Stream mode, not the headset view</small>
+      </dd>
+
+      <dt>Editing</dt>
+      <dd>Shotcut</dd>
+    </dl>
+  </div>
+
+  <div class="rule left">How to have smooth tracking?</div>
+
+  <ul class="tips">
+    <li><b>Properly cool your PC.</b>
+      I was thermal throttling my system for a year, trying to chase every gremlin and
+      reflective surface in my room. The reality was that when my PC was thermal throttling,
+      my right hand and hip would float off into space. Now with a proper cooling setup
+      I'm not seeing those issues at all.
+    </li>
+  </ul>
+
+  <p class="note">
+    Questions about any of it — <a href="https://x.com/nexrushvr">@nexrushvr</a>.
+  </p>
+
+  <footer>
+    <p><span class="handle">NexRush</span> — <a href="./">all links</a> · <a href="./avatars.html">avatars &amp; assets</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
